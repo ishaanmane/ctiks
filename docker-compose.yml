@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mariadb:11.8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ctiks@database
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: ctiks
+      MYSQL_PASSWORD: ishaan@2003
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./ctiks_db.sql:/docker-entrypoint-initdb.d/ctiks_db.sql
+
+  wordpress:
+    image: wordpress:6.9.2-php8.4-apache
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ctiks
+      WORDPRESS_DB_PASSWORD: ishaan@2003
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_HOME', 'https://ctiks.iitb.ac.in');
+        define('WP_SITEURL', 'https://ctiks.iitb.ac.in');
+    volumes:
+      - ./wordpress:/var/www/html
+    depends_on:
+      - db
+
+volumes:
+  db_data:
